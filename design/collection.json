@@ -1,0 +1,265 @@
+{
+	"info": {
+		"_postman_id": "0a40e8be-4d0c-470e-beb7-cbd005aaa9ac",
+		"name": "Design",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Login as usercco",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check status code\", function(){\r",
+							"    pm.expect(pm.response.code).to.eq(200);\r",
+							"});\r",
+							"\r",
+							"pm.environment.set('BearerToken',pm.response.json().token_type+\" \"+pm.response.json().access_token);\r",
+							"pm.environment.set('RefreshToken',pm.response.json().refresh_token);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.variables.clear();\r",
+							"\r",
+							"pm.variables.set('RandomNumber', (new Date()).toISOString().replace(/[^0-9]/g, \"\").slice(0, -3)+\"\"+Math.floor((Math.random() * 100000) + 1)); \r",
+							"\r",
+							"// Solution Development \r",
+							"\r",
+							"pm.variables.set('BookName','DesignSystems_Book'+ pm.variables.get('RandomNumber'));\r",
+							"pm.variables.set('SolutionName','DesignSystems_Solution'+ pm.variables.get('RandomNumber'));\r",
+							"pm.variables.set('CCORoleId', pm.variables.get('CCORoleId'));\r",
+							"pm.variables.set('RoleCCO', pm.variables.get('RoleCCO'));\r",
+							"\r",
+							"pm.variables.set('CuName1','Input1_BasicSolution '+ pm.variables.get('RandomNumber'));\r",
+							"pm.variables.set('EntityName1','Enter_details1'+ pm.variables.get('RandomNumber'));\r",
+							"pm.variables.set('AttributeName11','Full Name');\r",
+							"pm.variables.set('AttributeName12','Age');\r",
+							"\r",
+							"pm.variables.set('CuName2','Input2_BasicSolution'+ pm.variables.get('RandomNumber'));\r",
+							"pm.variables.set('EntityName2','Enter_details2'+ pm.variables.get('RandomNumber'));\r",
+							"pm.variables.set('AttributeName21','Address');\r",
+							"pm.variables.set('AttributeName22','Pin Code');\r",
+							"\r",
+							"// Solution Execution\r",
+							"\r",
+							"pm.variables.set('AttributeValue11', 'John '+ pm.variables.get('RandomNumber'));\r",
+							"pm.variables.set('AttributeValue12', pm.variables.get('RandomNumber'));\r",
+							"\r",
+							"pm.variables.set('AttributeValue21', 'California '+ pm.variables.get('RandomNumber'));\r",
+							"pm.variables.set('AttributeValue22', pm.variables.get('RandomNumber'));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					},
+					{
+						"key": "Accept-Language",
+						"type": "text",
+						"value": "en"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "client_id",
+							"value": "{{TenantName}}"
+						},
+						{
+							"key": "grant_type",
+							"value": "password"
+						},
+						{
+							"key": "password",
+							"value": "{{Password}}"
+						},
+						{
+							"key": "username",
+							"value": "{{UserCCO}}"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{IamURL}}/auth/realms/{{TenantName}}/protocol/openid-connect/token",
+					"host": [
+						"{{IamURL}}"
+					],
+					"path": [
+						"auth",
+						"realms",
+						"{{TenantName}}",
+						"protocol",
+						"openid-connect",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fetch Ontology(Industry List)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check status code\", function () {",
+							"    pm.response.to.have.status(200);",
+							"",
+							"    pm.variables.set('OntologyId',pm.response.json()[0].id);",
+							"    pm.variables.set('OntologyName',pm.response.json()[0].name);",
+							"    pm.variables.set('OntologyDisplayName',pm.response.json()[0].name);",
+							"    pm.expect(pm.response.json().length > 0).to.eq(true);",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept-language",
+						"value": "en",
+						"type": "text"
+					},
+					{
+						"key": "authorization",
+						"value": "{{BearerToken}}",
+						"type": "text"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://{{TenantName}}.{{BaseURL}}/dsd-orch/dsd-bets-store/ontology/root",
+					"protocol": "https",
+					"host": [
+						"{{TenantName}}",
+						"{{BaseURL}}"
+					],
+					"path": [
+						"dsd-orch",
+						"dsd-bets-store",
+						"ontology",
+						"root"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fetch Book Covers",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.expect(pm.response.json().message).to.eq(\"Book Covers fetched\");",
+							"    pm.expect(pm.response.json().result.data.length > 0).to.eq(true);",
+							"    pm.expect(pm.response.json().result.data[0].ontology.name).to.eq(pm.variables.get(\"OntologyName\"));",
+							"    pm.variables.set('BookCoverLinkDesktop',pm.response.json().result.data[0].link.desktop);",
+							"    pm.variables.set('BookCoverLinkMobile',pm.response.json().result.data[0].link.mobile);",
+							"    pm.variables.set('BookCoverLinkPad',pm.response.json().result.data[0].link.pad);",
+							"    pm.variables.set('BookCoverLinkAny',pm.response.json().result.data[0].link.any);",
+							"   ",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept-language",
+						"value": "en",
+						"type": "text"
+					},
+					{
+						"key": "authorization",
+						"value": "{{BearerToken}}",
+						"type": "text"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://{{TenantName}}.{{BaseURL}}/dsd-orch/design/assets/book-cover?limit=20&ontologyId={{OntologyId}}&page=1",
+					"protocol": "https",
+					"host": [
+						"{{TenantName}}",
+						"{{BaseURL}}"
+					],
+					"path": [
+						"dsd-orch",
+						"design",
+						"assets",
+						"book-cover"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "20"
+						},
+						{
+							"key": "ontologyId",
+							"value": "{{OntologyId}}"
+						},
+						{
+							"key": "page",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
